@@ -1,0 +1,23 @@
+{
+
+  "MessageContents": {
+    "User-001": " sent to you a friend request",
+    "User-002": " accepted your friend request",
+    "User-003": " reacted to your post",
+    "User-004": " reacted to your answer to a comment",
+    "User-005": " reacted to your comment",
+    "User-006": " replied to your comment",
+    "User-007": " commented on your post",
+    "User-008": " invited you join a group",
+    "Group-001": " added a photo in",
+    "All-001": "",
+    "Post-001": " Your video is ready to view. You can now watch it.",
+    "Setting-001": "",
+    "Common-001": " and ",
+    "Common-002": " has ",
+    "Common-003": " post.",
+    "Common-004": " announced that "
+
+
+    }
+}

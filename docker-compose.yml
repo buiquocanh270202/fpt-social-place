@@ -1,0 +1,48 @@
+
+version: "3.9"
+services:
+  scms_api:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    image: quannahe164025/fptforum
+    container_name: web_api_application
+    networks:
+      - my_network
+    environment:
+      -  QueryConnection=server =sql_server2022,1466; database = fptforum;uid=sa_query;pwd=VeryComplex123Password;Trusted_Connection=False;Encrypt=False
+      -  CommandConnection=server =sql_server2022,1466; database = fptforum;uid=sa_command;pwd=VeryComplex123Password;Trusted_Connection=False;Encrypt=False
+    depends_on:
+      - "sql"
+    ports:
+      - "44320:44329"
+  sql:
+    image: "mcr.microsoft.com/mssql/server:2022-latest"
+    container_name: sql_server2022
+    ports:
+      - "1466:1433"
+    environment:
+      - ACCEPT_EULA=y
+      - MSSQL_SA_PASSWORD=VeryComplex123Password
+      - MSSQL_PID=Express
+    networks:
+      - my_network
+    volumes:
+      - ./data:/var/opt/mssql/data
+      - ./log:/var/opt/mssql/log
+      - ./secret:/var/opt/mssql/secret
+  # scms_fe:
+  #   build:
+  #       context: ./SCMS_FE/scms_fe
+  #       dockerfile: ./Dockerfile
+  #   image: truongdvhe153164294/image_scms_fe
+  #   container_name: container_scms_fe
+  #   networks:
+  #     - my_network
+  #   ports:
+  #     - "8696:8080"
+
+networks:
+  my_network:
+    driver: bridge
+    

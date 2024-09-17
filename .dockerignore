@@ -1,0 +1,27 @@
+# Ignore .NET Core build results
+bin/
+obj/
+
+# Ignore user-specific files
+*.swp
+*.swo
+*.user
+*.vspscc
+*.vssscc
+
+# Ignore MacOS system files
+.DS_Store
+
+# Ignore folders that might hold sensitive data or unnecessary information
+.idea/
+.vscode/
+.env
+node_modules/
+
+# Ignore Dockerfile and docker-compose override files
+Dockerfile.*
+docker-compose.override.yml
+
+# Ignore build output folders
+dist/
+build/
