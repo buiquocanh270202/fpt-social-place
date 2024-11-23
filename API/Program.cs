@@ -43,7 +43,7 @@ builder.Services.AddCors(options =>
         builder => builder
         .WithOrigins("https://api.fptsocial.com","https://localhost:3000", "http://14.225.210.40:3000",
         "http://14.225.210.40:3000", "http://localhost:3000",
-        "https://fptsocial.com", "http://localhost:8443")
+        "https://fptsocial.com", "http://localhost:8443" , "http://127.0.0.1:5500")
         .AllowAnyMethod()
         .AllowAnyHeader()
         .AllowCredentials());

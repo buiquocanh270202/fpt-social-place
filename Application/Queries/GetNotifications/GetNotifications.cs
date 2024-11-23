@@ -13,13 +13,13 @@ namespace Application.Queries.GetNotifications
 {
     public class GetNotifications : IGetNotifications
     {
-        private readonly IMapper _mapper;
+        //private readonly IMapper _mapper;
         private readonly IServiceProvider _serviceProvider;
         private readonly SplitString _splitString;
-        public GetNotifications(IServiceProvider serviceProvider, IMapper mapper)
+        public GetNotifications(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
-            _mapper = mapper;
+            //_mapper = mapper;
             _splitString = new SplitString();
         }
 
@@ -52,8 +52,9 @@ namespace Application.Queries.GetNotifications
                 //{
                 //    throw new ErrorException(StatusCodeEnum.Context_Not_Found);
                 //}
+                
                 var user = _querycontext.UserProfiles.FirstOrDefault(x => x.UserId.Equals(Guid.Parse(senderId)));
-                var avatarUrl = _querycontext.AvataPhotos.FirstOrDefault(x => x.UserId.Equals(Guid.Parse(senderId)) && x.IsUsed == true);
+                var avatarUrl = _querycontext.AvataPhotos.FirstOrDefault(x => x.UserId.Equals(Guid.Parse(senderId)) && x.IsUsed);
                 if (avatarUrl == null)
                 {
                     getAvatarSenderDTO.UserProfile = user;
@@ -188,7 +189,7 @@ namespace Application.Queries.GetNotifications
                 //{
                 //    throw new ErrorException(StatusCodeEnum.Context_Not_Found);
                 //}
-                var user = _querycontext.GroupMembers.Where(x => x.GroupId.Equals(Guid.Parse(groupId)) && x.IsJoined == true).ToList();
+                var user = _querycontext.GroupMembers.Where(x => x.GroupId.Equals(Guid.Parse(groupId)) && x.IsJoined).ToList();
 
                 return user;
             }
