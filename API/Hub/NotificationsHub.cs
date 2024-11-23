@@ -54,8 +54,8 @@ namespace Application.Hub
             {
                 throw new ErrorException(StatusCodeEnum.Context_Not_Found);
             }
-            //var rawToken = _httpContext.Request.Query["access_token"];
-            var rawToken = _httpContext.Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
+            var rawToken = _httpContext.Request.Query["access_token"];
+            //var rawToken = _httpContext.Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
 
             var path = _httpContext.Request.Path;
             if (string.IsNullOrEmpty(rawToken) &&
@@ -84,8 +84,8 @@ namespace Application.Hub
             {
                 throw new ErrorException(StatusCodeEnum.Context_Not_Found);
             }
-            //var rawToken = _httpContext.Request.Query["access_token"];
-            var rawToken = _httpContext.Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
+            var rawToken = _httpContext.Request.Query["access_token"];
+            //var rawToken = _httpContext.Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
             var path = _httpContext.Request.Path;
             if (string.IsNullOrEmpty(rawToken) &&
                 (!path.StartsWithSegments("/notificationsHub")))
@@ -109,8 +109,8 @@ namespace Application.Hub
             {
                 throw new ErrorException(StatusCodeEnum.Context_Not_Found);
             }
-            //var rawToken = _httpContext.Request.Query["access_token"];
-            var rawToken = _httpContext.Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
+            var rawToken = _httpContext.Request.Query["access_token"];
+            //var rawToken = _httpContext.Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
             var path = _httpContext.Request.Path;
             if (string.IsNullOrEmpty(rawToken) &&
                 (!path.StartsWithSegments("/notificationsHub")))
@@ -142,13 +142,6 @@ namespace Application.Hub
 
         }
 
-        public async Task PushNotifyToListUsers(string sender, string[] receiver, string content, string url)
-        {
-            string msg = sender + _configuration["MessageContents:Common-004"] + content;
-            await Clients.Users(receiver).ReceiveNotification(msg, url);
-
-        }
-
         public async Task PushNotifyToUser(string sender, string receiver, string content, string url)
         {
             string msg = sender + _configuration["MessageContents:Common-004"] + content;
@@ -160,7 +153,13 @@ namespace Application.Hub
         public async Task SendNotify(string notice)
         {
 
-            await _INotificationsHubBackgroundService.SendNotifyService(Context ,notice);
+            await _INotificationsHubBackgroundService.SendNotifyService(Context, notice);
+
+        }
+        public async Task SendNotifyToListUser(string notice)
+        {
+
+            await _INotificationsHubBackgroundService.SendNotifyToListUserService(Context, notice);
 
         }
 

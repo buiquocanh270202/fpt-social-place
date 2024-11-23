@@ -70,8 +70,8 @@ namespace API.Hub
             {
                 throw new ErrorException(StatusCodeEnum.Context_Not_Found);
             }
-            //var rawToken = _httpContext.Request.Query["access_token"];
-            var rawToken = _httpContext.Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
+            var rawToken = _httpContext.Request.Query["access_token"];
+            //var rawToken = _httpContext.Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
             var path = _httpContext.Request.Path;
             if (string.IsNullOrEmpty(rawToken) &&
                 (!path.StartsWithSegments("/notificationsHub")))
@@ -147,6 +147,103 @@ namespace API.Hub
             }
         }
 
+        public async Task SendNotifyToListUserService(HubCallerContext context, string notice)
+        {
+            HttpContext _httpContext = context.GetHttpContext();
+            dynamic routeOb = JsonConvert.DeserializeObject<dynamic>(notice);
+            List<string> receiverIds = routeOb.Receiver;
+            string url = routeOb.Url;
+            string code = routeOb.MsgCode;
+            string addMsg = routeOb.AddMsg;
+            string actionId = routeOb.ActionId;
+            string msgDB;
+
+            if (_httpContext == null)
+            {
+                throw new ErrorException(StatusCodeEnum.Context_Not_Found);
+            }
+            var rawToken = _httpContext.Request.Query["access_token"];
+            //var rawToken = _httpContext.Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
+            var path = _httpContext.Request.Path;
+            if (string.IsNullOrEmpty(rawToken) &&
+                (!path.StartsWithSegments("/notificationsHub")))
+            {
+                await _hubContext.Clients.Client(context.ConnectionId).ReceiveNotification($"The  ({context.ConnectionId}) Connected Fail!");
+            }
+            var handle = new JwtSecurityTokenHandler();
+            var jsontoken = handle.ReadToken(rawToken) as JwtSecurityToken;
+            if (jsontoken == null)
+            {
+                await _hubContext.Clients.Client(context.ConnectionId).ReceiveNotification($"The  ({context.ConnectionId}) Connected Fail!");
+            }
+            var senderId = jsontoken.Claims.FirstOrDefault(claim => claim.Type == "userId").Value;
+
+            foreach (var receiverId in receiverIds)
+            {
+                if (senderId != receiverId)
+                {
+                    var senderInfo = _getNotifications.GetAvatarBySenderId(senderId);
+
+                    string senderName = senderInfo.UserProfile.FirstName + " " + senderInfo.UserProfile.LastName;
+                    string notificationsMessage = _configuration.GetSection("MessageContents").GetSection(code).Value;
+                    if (actionId == null)
+                    {
+                        msgDB = senderName + SEC + notificationsMessage + addMsg;
+                        string msg = notificationsMessage + addMsg;
+                        NotificationOutDTO notificationOutDTO = new()
+                        {
+                            SenderId = senderId,
+                            SenderName = senderName,
+                            //ReciverId = receiverId,
+                            SenderAvatar = senderInfo.SenderAvatarURL,
+                            Message = msg,
+                            Url = url
+
+                        };
+                        string jsonNotice = System.Text.Json.JsonSerializer.Serialize(notificationOutDTO);
+
+                        foreach (var connectionId in _connections.GetConnections(receiverId))
+                        {
+                            await _hubContext.Clients.Client(connectionId).ReceiveNotification(jsonNotice);
+                        }
+
+                        await _createNotifications.CreateNotitfication(senderId, receiverId, msgDB, url);
+                    }
+                    else
+                    {
+                        msgDB = senderName + SEC + actionId + SEC + notificationsMessage + addMsg;
+                        bool isExist = _getNotifications.IsNotifyExist(senderId, msgDB);
+                        if (!isExist)
+                        {
+                            string msg = notificationsMessage + addMsg;
+                            NotificationOutDTO notificationOutDTO = new()
+                            {
+                                SenderId = senderId,
+                                SenderName = senderName,
+                                //ReciverId = receiverId,
+                                SenderAvatar = senderInfo.SenderAvatarURL,
+                                Message = msg,
+                                Url = url
+
+                            };
+                            string jsonNotice = System.Text.Json.JsonSerializer.Serialize(notificationOutDTO);
+
+                            foreach (var connectionId in _connections.GetConnections(receiverId))
+                            {
+                                await _hubContext.Clients.Client(connectionId).ReceiveNotification(jsonNotice);
+                            }
+
+                            await _createNotifications.CreateNotitfication(senderId, receiverId, msgDB, url);
+                        }
+
+                    }
+
+                }
+            }
+            
+        }
+
+
         public async Task SendGroupNotifyService(HubCallerContext context, string notice)
         {
             HttpContext _httpContext = context.GetHttpContext();
@@ -161,8 +258,8 @@ namespace API.Hub
             {
                 throw new ErrorException(StatusCodeEnum.Context_Not_Found);
             }
-            //var rawToken = _httpContext.Request.Query["access_token"];
-            var rawToken = _httpContext.Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
+            var rawToken = _httpContext.Request.Query["access_token"];
+            //var rawToken = _httpContext.Request.Headers[HeaderNames.Authorization].ToString().Replace("Bearer ", "");
             var path = _httpContext.Request.Path;
             if (string.IsNullOrEmpty(rawToken) &&
                 (!path.StartsWithSegments("/notificationsHub")))

@@ -1,0 +1,14 @@
+﻿<RunSettings>
+	<DataCollectionRunSettings>
+		<DataCollectors>
+			<DataCollector friendlyName="XPlat Code Coverage">
+				<Configuration>
+					<!--<ExcludeByFile>**/Program.cs</ExcludeByFile>-->
+					<ExcludePath>
+						G:\Capstone\Source\Server\fptsocial\Test\SWT_Lab3\CreateNotificationsTests.cs
+					</ExcludePath>
+				</Configuration>
+			</DataCollector>
+		</DataCollectors>
+	</DataCollectionRunSettings>
+</RunSettings>
