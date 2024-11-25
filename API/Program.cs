@@ -21,10 +21,12 @@ using Microsoft.OpenApi.Models;
 using System.Configuration;
 using TableDependency.SqlClient;
 using Application.DTO.MailDTO;
+using API.Middlewares.Extentions;
 
 [assembly: ApiController]
 var builder = WebApplication.CreateBuilder(args);
-
+// Add extention to add DI service
+builder.Services.ExtentionServiceInAssembly(builder.Configuration);
 // Add services to the container.
 builder.Services.AddDbContext<fptforumQueryContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("QueryConnection")));
